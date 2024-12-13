@@ -1,9 +1,10 @@
 :FORCE_RESPAWN_ELEVATED_WHEN_NEEDED_V3.0
-REM this one-liner enforces admin privileges (elevation), when needed:
+REM this one-liner enforces admin privileges (elevation), when needed; for documentation see: https://github.com/SaschaHerres/batch-templates
 REM # if this script is already running in an elevated context: do nothing but skip to next line
 REM # if not elevated: ask for elevation, spawn new instance of this script in a new window while keeping working directory and all command line arguments, wait for
 REM   instance to exit, then exit itself while returning the catched exit code; this provides 100% transparency to a cmd/script, where this script has been called from
 REM details:
+REM * 'DELAYEDEXPANSION' must be enabled before, except for that put this code at the top most line of your script
 REM * 'net FILE' as native command, that reliably fails when run non-elevated
 REM * safe escaping of '"' in command line arguments for spawning new instance; note: usage of surrounding '^"' to assign variable with odd/unknown numbers of '"';
 REM   special case: when '%*' has odd number of '"', the closing '^' is catched in the variable, so check & remove that; note, there is no case, where '%*' ends with '^'
@@ -12,7 +13,7 @@ REM * PowerShell's 'Start-Process' with '-Verb RunAs' for native elevation promp
 REM * '%ComSpec%' as shell to ensure proper quoting of script file name (so path may contain spaces/special characters) and original arguments (see above for quoting)
 REM * preceeding 'CHDIR' to run instance in same working directory; note: trailing ' ' after '%CD%' to avoid error when run from a drive's root (where %CD% ends with '\')
 REM additional notes:
-REM - 'DELAYEDEXPANSION' must be enabled before, except for that put this code at the top most line of your script
+REM - this code is adapted to fit in on line to ease reusing in multiple scripts; for a multiline layout some adaptions might not be needed
 REM - when elevated context has no access to script's location, the code fails (e.g. run from user profile, where admin has no read access), but this is beyond this code
 REM - for security reasons native executables are run via their well-known fully qualified path names, where only '%SystemRoot%' is trusted but no other paths/variables
 REM - except for the safe escaping of '"' in command line arguments, there is no input validation or escaping for non-quoted arguments (e.g. for: ^ | & < > or %);
